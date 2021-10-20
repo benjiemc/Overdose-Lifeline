@@ -49,6 +49,8 @@ g.deaths <- ggplot(overdose.deaths, aes(map_id = county)) +
 ggplotly(g.deaths)
 
 ```
+
+
 ```{r}
 indiana.demographic <- read_excel("Indiana County Population Data - US Census.xlsx", sheet = "2020 Demographic Data", skip = 2)
 
