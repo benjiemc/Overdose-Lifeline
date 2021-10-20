@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Indiana"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -8,29 +8,53 @@ output:
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
+library(ggplot2)
+library(readxl)
+library(plotly)
+library(maps)
+knitr::opts_knit$set(root.dir = "C:/Users/Joshua Ho/Desktop/Y3T1 - Engineering/BMEG 372/Overdoes Lifeline/")
+setwd("C:/Users/Joshua Ho/Desktop/Y3T1 - Engineering/BMEG 372/Overdoes Lifeline")
+
 ```
 
-Column {data-width=650}
------------------------------------------------------------------------
 
-### Chart A
+### Overdose Deaths by County
 
 ```{r}
 
+library(dplyr)
+indiana.data <- read_excel("Indiana County Population Data - US Census.xlsx", sheet = "Drug Overdose Mortality Rate")
+overdose.values <- data.frame("county" = indiana.data$County, "deaths" = indiana.data$`# Drug Overdose Deaths`, "rate" = indiana.data$`# Drug Overdose Death Rate`)
+indiana_df = map_data("county", region = "indiana")
+overdose.values$county <- tolower(gsub(" County", "", overdose.values$county))
+overdose.deaths = data.frame("county" = overdose.values$county, "deaths" = indiana.data$`# Drug Overdose Deaths`)
+overdose.rate = data.frame("county" = overdose.values$county, "rate" = indiana.data$`# Drug Overdose Death Rate`)
+overdose.modified <- tidyr::gather(overdose.values, variable, value, -county)
+indiana.modified <- data.frame(select(indiana_df, -region, -subregion), "region" = indiana_df$subregion)
+
+g <- ggplot(overdose.modified, aes(map_id = county)) +
+  geom_map(aes(fill = value), map = indiana.modified) +
+  expand_limits(x = indiana_df$long, y = indiana_df$lat) + facet_wrap(~ variable) + theme_void()
+ggplotly(g)
+
+g.rate <- ggplot(overdose.rate, aes(map_id = county)) +
+  geom_map(aes(fill = rate), map = indiana.modified) +
+  expand_limits(x = indiana_df$long, y = indiana_df$lat) + theme_void() 
+ggplotly(g.rate)
+
+g.deaths <- ggplot(overdose.deaths, aes(map_id = county)) +
+  geom_map(aes(fill = deaths), map = indiana.modified, colour = alpha("white", 1/2), size = 0.2) +
+  expand_limits(x = indiana_df$long, y = indiana_df$lat) + theme_void() + scale_fill_gradient(low="blue", high="red")
+  
+ggplotly(g.deaths)
+
 ```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart B
-
 ```{r}
+indiana.demographic <- read_excel("Indiana County Population Data - US Census.xlsx", sheet = "2020 Demographic Data", skip = 2)
+
 
 ```
 
-### Chart C
 
-```{r}
 
-```
 
