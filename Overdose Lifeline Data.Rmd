@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Overdose Lifeline Data"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -10,10 +10,26 @@ output:
 library(flexdashboard)
 ```
 
-Column {data-width=650}
+Row {}
 -----------------------------------------------------------------------
 
-### Chart A
+### Maps
+
+```{r}
+
+```
+
+### Info
+
+```{r}
+
+```
+
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Chart B
 
 ```{r}
 
