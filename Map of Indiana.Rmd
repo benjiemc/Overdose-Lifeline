@@ -8,10 +8,7 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-# Setup, initialize root directory for data location and tool libraries
-
-knitr::opts_knit$set(root.dir = "C:/Users/Joshua Ho/Desktop/Y3T1 - Engineering/BMEG 372/Overdoes Lifeline/")
-setwd("C:/Users/Joshua Ho/Desktop/Y3T1 - Engineering/BMEG 372/Overdoes Lifeline")
+# Setup and call relevant tool libraries
 
 library(flexdashboard)
 library(shiny)
@@ -26,6 +23,14 @@ library(stringr)
 library(knitr)
 library(raster)
 library(rgeos)
+
+library(stats)
+library(graphics)
+library(grDevices)
+library(utils)
+library(datasets)
+library(methods)
+library(base)
 
 ```
 
@@ -59,8 +64,8 @@ names(indiana.sf)[names(indiana.sf) == 'Total.Opioid.Overdose.Deaths...12'] <- "
 cdc.race.overdose <- read.csv("cdc-race-overdose.csv")
 first.responder.race.age <- read.csv("first-responder-race-age.csv")
 cdc.age.overdose <- read.csv("CDC Age Data.csv")
-raceData <- merge(cdc.race.overdose, first.responder.race.age, by="ï..County")
-ageData <- merge(cdc.age.overdose, first.responder.race.age, by="ï..County")
+raceData <- merge(cdc.race.overdose, first.responder.race.age, by.x =1, by.y =1)
+ageData <- merge(cdc.age.overdose, first.responder.race.age, by.x =1, by.y =1)
 
 names(raceData)[names(raceData) == "ï..County"] <- 'County'
 names(ageData)[names(ageData) == "ï..County"] <- 'County'
@@ -77,6 +82,7 @@ colnames(data) <- NULL
 
 output_data <- data.frame(deaths = integer(), deaths.normalized = double(), 
                           year = integer(), county = character())
+
 for (row in 3:nrow(data)){
   
   for (col in 1:5){
@@ -322,7 +328,7 @@ if(length(colname) == 0){
   colname <- colname[-1]
 }
 colnametable <- paste(colname, collapse =", ")
-rownamesdata <- c("County:","Overdose Deaths", "Deaths Ranking (Highest to Lowest number of deaths)", "Kits Distributed", "Kits Ranking (Lowest to Highest number of kits distributed)", "Number of Active Programs", "Active Programs")
+rownamesdata <- c("County","Overdose Deaths", "Deaths Ranking (Highest to Lowest number of deaths)", "Kits Distributed", "Kits Ranking (Lowest to Highest number of kits distributed)", "Number of Active Programs", "Active Programs")
 tabledataframe<- data.frame("Summary"=matrix(ncol = 1, nrow = 7))
 tabledataframe[1,1] <- (compiledData$County[which(compiledData$ID == county)])
 tabledataframe[2,1] <- (compiledData$deaths.data..Total.Opioid.Overdose.Deaths...2.[which(compiledData$ID == county)])
